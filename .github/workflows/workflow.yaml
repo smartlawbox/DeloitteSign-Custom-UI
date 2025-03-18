@@ -1,0 +1,31 @@
+name: SmartBox Deloitte Sign Workflow
+
+on:
+  push:
+    branches: [ main ]
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      
+    steps:
+    - uses: actions/checkout@v3
+        
+    - name: Docker Build
+      run: |
+        docker build -t smartbox-deloittesign:${GITHUB_SHA::6} .
+        docker tag smartbox-deloittesign:${GITHUB_SHA::6} ghcr.io/smartlawbox/smartbox-deloittesign:${GITHUB_SHA::6}
+        docker login ghcr.io -u smartlawbox --password "${{ secrets.PAT_TOKEN }}"
+        docker push ghcr.io/smartlawbox/smartbox-deloittesign:${GITHUB_SHA::6}
+
+    - uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_SA }}'
+        
+    - name: Deploy Cloud Run
+      run: |
+        gcloud auth configure-docker us-central1-docker.pkg.dev
+        gcloud run deploy smartbox-deloittesign --image us-central1-docker.pkg.dev/smartbox-dev-446702/smartbox-dev-repo/smartlawbox/smartbox-deloittesign:${GITHUB_SHA::6} --platform managed --region us-central1 --project smartbox-dev-446702
