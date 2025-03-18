@@ -28,6 +28,8 @@ type userData = {
 function App() {
   const [selectedDocuments, setSelectedDocuments] = useState<number[]>([]);
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
+  const [emailSending, setEmailSending] = useState(false);
+  const [singleEmailSending, setSingleEmailSending] = useState(false);
   const [summary, setSummary] = useState({
     PendingSignatures: 0,
     Completed: 0,
@@ -83,18 +85,25 @@ function App() {
   };
 
   const handleSendForSignature = async () => {
+    setEmailSending(true);
     await axios.post(`${baseURL}/digital-sign/send-document`, {
       customer_ids: selectedDocuments,
     });
+    alert("Emails sent successfully.");
+    setEmailSending(false);
+    setSelectedDocuments([]);
   };
 
   const handleActionClick = async (action: string, id: number) => {
     switch (action) {
       case "send":
         try {
+          setSingleEmailSending(true);
           await axios.post(`${baseURL}/digital-sign/send-document`, {
             customer_ids: [activeDropdown],
           });
+          alert("Email sent successfully.");
+          setSingleEmailSending(false);
         } catch (error) {
           alert("Error sending document for signature");
           console.error(
@@ -244,10 +253,10 @@ function App() {
                 </div>
                 <button
                   onClick={handleSendForSignature}
-                  disabled={selectedDocuments.length === 0}
+                  disabled={emailSending || selectedDocuments.length === 0}
                   className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Send for Signature
+                  {emailSending ? "Sending..." : "Send for Signature"}
                 </button>
               </div>
             </div>
@@ -339,9 +348,12 @@ function App() {
                                   onClick={() =>
                                     handleActionClick("send", user.custid)
                                   }
+                                  disabled={singleEmailSending}
                                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 >
-                                  Send for Signature
+                                  {singleEmailSending
+                                    ? "Sending..."
+                                    : "Send for Signature"}
                                 </button>
                                 <button
                                   onClick={() =>
