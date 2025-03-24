@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { PenTool, Shield } from "lucide-react";
 import axios from "axios";
 
@@ -9,7 +9,6 @@ function VerifyIdentity() {
   const [error, setError] = useState("");
   const [validating, setValidating] = useState(false);
   const { custId } = useParams();
-  const navigate = useNavigate();
   const baseURL =
     "https://smartbox-digital-signature-api-1001466762095.us-central1.run.app";
 
@@ -21,17 +20,21 @@ function VerifyIdentity() {
         date_of_birth: dob,
         custid: custId,
       })
-      .then((response) => {
-        console.log("validating response: ", response);
+      .then(({ data }) => {
+        if (data?.document_url) {
+          alert("Verification successful! Redirecting to document...");
+          // Navigate to the document signing page after successful verification
+          window.open(data.document_url, "_self");
+        } else {
+          alert("Document not available to open");
+        }
         setValidating(false);
-        alert("Verification successful! Redirecting to document...");
-        // Navigate to the document signing page after successful verification
-        navigate(`/docauth/${custId}`);
       })
       .catch((error) => {
+        const { message } = error.response.data;
         console.log("Document authentication error: ", error);
         setValidating(false);
-        alert("Verification failed!");
+        alert("Verification failed! " + message);
       });
   };
 
