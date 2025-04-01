@@ -51,7 +51,7 @@ function Dashboard() {
     },
   ]);
   const baseURL =
-    "https://smartbox-digital-signature-api-1001466762095.us-central1.run.app";
+    "https://yh5gjns4ci.us-east-1.awsapprunner.com";
 
   const fetchSummary = async () => {
     const { data } = await axios.get(`${baseURL}/customers/summary`);
