@@ -2,7 +2,7 @@ name: SmartBox Deloitte Sign Workflow
 
 on:
   push:
-    branches: [ main ]
+    branches: [ aws-app-runner ]
 
 
 jobs:
