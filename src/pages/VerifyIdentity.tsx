@@ -10,7 +10,7 @@ function VerifyIdentity() {
   const [validating, setValidating] = useState(false);
   const { custId } = useParams();
   const baseURL =
-    "https://smartbox-digital-signature-api-1001466762095.us-central1.run.app";
+    "https://yh5gjns4ci.us-east-1.awsapprunner.com";
 
   const handleVerifyIdentity = async () => {
     setValidating(true);
