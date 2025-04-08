@@ -51,7 +51,7 @@ function Dashboard() {
     },
   ]);
   const baseURL =
-    "https://yh5gjns4ci.us-east-1.awsapprunner.com";
+    "https://rdmzu8dprp.us-east-1.awsapprunner.com";
 
   const fetchSummary = async () => {
     const { data } = await axios.get(`${baseURL}/customers/summary`);
